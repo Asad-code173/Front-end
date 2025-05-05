@@ -1,18 +1,20 @@
 import { useState } from "react";
 import validator from "validator";
 import { useNavigate } from 'react-router-dom';
+import { useMutation,useQueryClient } from "@tanstack/react-query";
+
+
 
 export const useLogin = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [showPassword, setShowPassword] = useState(false);
-  const passwordvisible = () => {
-    setShowPassword(!showPassword)
-  }
   const [errors, setErrors] = useState({})
   const [data, SetData] = useState({
     email: "",
     password: ""
   })
+  const passwordvisible = () => setShowPassword(!showPassword)
 
 
   const validateFields = () => {
@@ -38,46 +40,51 @@ export const useLogin = () => {
 
 
   }
+   
+   const mutation = useMutation({
+    mutationFn: async () => {
+      console.time("Login API Request")
+      const response = await fetch("/api/v1/users/login", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(data),
+        credentials: "include"
+      });
+      console.timeEnd("Login API Request"); 
+    
+      const result = await response.json();
+   
+      console.log(result);
+
+      
+      if (!response.ok) throw new Error(result.message || "Login failed");
+      return result.data.user; // ✅ Return user data
+    },
+    onSuccess: (user) => {
+      // ✅ Store user in React Query cache
+  
+      queryClient.setQueryData(["user"], user);
+   
+      if(user.role=== "admin"){
+        navigate("/admin/dashboard",{replace:true})
+      }
+      else{
+        navigate("/user/dashboard",{replace:true})
+      }
+
+    },
+    onError: (error) => {
+      setErrors({ login: error.message });
+    }
+  });
   const handleSignin = async (e) => {
     e.preventDefault();
-    if (!validateFields()) {
-      return
-
+    if (validateFields()) {
+      mutation.mutate(data)
     }
-    try {
-      const response = await fetch("/api/v1/users/login", {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify(data)
-
-      })
-      console.log(response);
-      const result = await response.json()
-      console.log(result);
-      if (!response.ok) {
-        setErrors({ login: result.message || 'Login failed' });
-      }
-      if (response.ok) {     
-        const isAdmin = result.data.user.role === "admin";  
-        
-        console.log(isAdmin)
-        
-        if (isAdmin) {
-          navigate('/admin/dashboard');
-        } else {
-          navigate('/user/dashboard');
-        }
-       
-          
-      }
-    } catch (error) {
-      console.log(error);
-
-    }
-
-  };
+  }
   
   
   const handleonChange = (e) => {
@@ -93,7 +100,8 @@ export const useLogin = () => {
     handleonChange,
     passwordvisible,
     showPassword,
-    validateFields
+    validateFields,
+    isLoading: mutation.isPending,
 
   }
 

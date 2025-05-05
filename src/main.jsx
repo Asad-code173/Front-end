@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from 'react';
+import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -6,6 +7,8 @@ import Layout from './Components/Layout.jsx';
 import AdminLayout from './Admin/Components/AdminLayout.jsx';
 import store from "./Store/Store.js";
 import { Provider } from 'react-redux';
+import UserLayout from './User/Components/UserLayout.jsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // import Loader from "./Components/Loader.jsx";
 
 // Front-end routes
@@ -24,14 +27,17 @@ const ForgotPassword = lazy(() => import('./Pages/ForgotPassword.jsx'));
 
 // Admin routes
 
-const AdminDashboard = lazy(()=> import('./Admin/Pages/Dashboard.jsx'))
+const AdminDashboard = lazy(() => import('./Admin/Pages/Dashboard.jsx'))
 const Categories = lazy(() => import('./Admin/Pages/Categories.jsx'));
-// const Products = lazy(() => import('./Admin/Pages/Products.jsx'));
-// const Enquiries = lazy(() => import('./Admin/Pages/Enquiries.jsx'));
+const Products = lazy(() => import('./Admin/Pages/Products.jsx'));
+
+  
+
 
 
 // user routes
-const UserDashboard = lazy(()=> import('./User/Components/Dashboard.jsx'))
+const UserDashboard = lazy(() => import('./User/Pages/Dashboard.jsx'))
+const UserorderHistory = lazy(() => import('./User/Pages/OrderHistory.jsx'))
 const router = createBrowserRouter([
   {
     path: "/",
@@ -88,40 +94,114 @@ const router = createBrowserRouter([
     ]
   },
   // Admin routes 
+  // {
+  //   path: "admin",
+  //   element: <AdminLayout />,
+  //   children: [
+  //     {
+  //       path: "dashboard",
+  //       element: <Suspense fallback={<div>.....Loading</div>}><AdminDashboard /></Suspense>
+  //     },
+  //     {
+  //       path: "categories",
+  //       element: <Suspense fallback={<div>.....Loading</div>}><Categories /></Suspense>
+  //     },
+  //     {
+  //       path: "products",
+  //       element: <Suspense fallback={<div>.....Loading</div>}><Products /></Suspense>
+  //     },
+
+
+
+
+  //   ]
+  // },
   {
     path: "admin",
-    element: <AdminLayout />, 
+    element: <ProtectedRoute />,
     children: [
       {
-        path: "dashboard",
-        element: <Suspense fallback={<div>.....Loading</div>}><AdminDashboard /></Suspense>
+        path: "",
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "dashboard",
+            element: (
+              <Suspense fallback={<div>....Loading</div>}>
+                <AdminDashboard />
+              </Suspense>
+            ),
+
+          },
+          {
+            path: "categories",
+            element: (
+              <Suspense fallback={<div>......Loading</div>}>
+                <Categories />
+              </Suspense>
+            )
+          },
+          {
+            path: "products",
+            element: (
+              <Suspense fallback={<div>......Loading</div>}>
+                <Products />
+              </Suspense>
+            )
+          },
+          
+          
+        ],
       },
-      {
-        path:"categories",
-        element: <Suspense fallback={<div>.....Loading</div>}><Categories/></Suspense>
-      },
-      
-      
-     
-    ]
+    ],
   },
-// user routes
+  // user routes
+
 
   {
-    path:"user",
-    children:[
+    path: "user",
+    element: <ProtectedRoute />,
+    children: [
       {
-        path:"dashboard",
-        element:<Suspense fallback = {<div>...Loading</div>}><UserDashboard/></Suspense>
-      }
-    ]
-  }
+        path: "",
+        element: <UserLayout />,
+        children: [
+          {
+            path: "dashboard",
+            element: (
+              <Suspense fallback={<div>....Loading</div>}>
+                <UserDashboard />
+              </Suspense>
+            ),
+
+          },
+          {
+            path: "orderhistory",
+            element: (
+              <Suspense fallback={<div>......Loading</div>}>
+                <UserorderHistory />
+              </Suspense>
+            )
+          }
+        ],
+      },
+    ],
+  },
+
+
+
+
 ]);
+
+
+const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
+    </QueryClientProvider>
   </React.StrictMode>
 );

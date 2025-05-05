@@ -4,7 +4,7 @@ import Footer from './Footer'
 import Sidebar from './Sidebar'
 import { Outlet } from 'react-router-dom'
 
-const AdminLayout = () => {
+const UserLayout = () => {
   return (
     <>
       <div className='bg-gray-200 min-h-screen'>
@@ -22,5 +22,5 @@ const AdminLayout = () => {
   )
 }
 
-export default AdminLayout
+export default UserLayout
 

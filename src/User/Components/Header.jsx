@@ -8,31 +8,32 @@ import {
   ArrowRightStartOnRectangleIcon
 } from "@heroicons/react/24/outline";
 import image from "../../assets/Mens/image.png";
-
-import { useNavigate } from 'react-router-dom'
-
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
 
   const [openSetting, SetopenSetting] = useState();
- 
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const user = queryClient.getQueryData(["user"])
-
+  const navigate = useNavigate()
   const handleLogout = async () => {
     try {
       const response = await fetch('/api/v1/users/logout', {
         method: 'POST',
         credentials: 'include',
       });
-  
+      const result = await response.json()
+      console.log("Response of logout:", response);
+      console.log("Result:", result);
+      
       if (!response.ok) {
         throw new Error('Logout failed');
       }
   
-      
+      // Invalidate matlab 
       queryClient.removeQueries(['user']);
+
+     
   
       // Redirect to login page
       navigate('/login',{replace:true});
@@ -40,10 +41,6 @@ const Header = () => {
       console.error("Error logging out:", error);
     }
   };
-  
-
-
-
 
   return (
     <header className='bg-white w-full h-16 sticky top-0 shadow-md flex items-center justify-end px-4 sm:px-6 lg:px-10 gap-4 '>
@@ -67,11 +64,12 @@ const Header = () => {
       <BellIcon className='w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-gray-700 hover:text-black transition-colors duration-200 cursor-pointer' />
       <EnvelopeIcon className='w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-gray-700 hover:text-black transition-colors duration-200 cursor-pointer' />
       <span className='profile flex items-center gap-3 sm:gap-4'>
-        <button
-        className='w-7 h-7 sm:w-9 sm:h-9 rounded-full shadow-sm cursor-pointer text-2xl border border-black'
-         onClick={() => SetopenSetting(!openSetting)}>
-         {/* {user?.username ? user.username.charAt(0).toUpperCase() : "?"} */}
-
+        <button onClick={() => SetopenSetting(!openSetting)}>
+          <img
+            src={image}
+            alt='Profile'
+            className='w-7 h-7 sm:w-9 sm:h-9 rounded-full shadow-sm cursor-pointer'
+          />
         </button>
 
         <span className='profile-name flex flex-col leading-tight'>
@@ -91,9 +89,8 @@ const Header = () => {
                   <Cog6ToothIcon className="w-5 h-5 mr-3 text-gray-500 hover:text-black" />
                   Settings
                 </li>
-                <li
-                onClick={handleLogout}
-                 className="flex items-center px-4 py-2 text-sm text-[#111] hover:bg-gray-100 cursor-pointer transition-colors duration-200">
+                <li onClick={handleLogout}
+                className="flex items-center px-4 py-2 text-sm text-[#111] hover:bg-gray-100 cursor-pointer transition-colors duration-200">
                   <ArrowRightStartOnRectangleIcon className="w-5 h-5 mr-3 text-gray-500 hover:text-black" />
                   Logout
                 </li>
