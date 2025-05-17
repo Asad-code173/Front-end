@@ -1,7 +1,7 @@
 import { useState } from "react";
 import validator from "validator";
 import { useNavigate } from 'react-router-dom';
-import { useMutation,useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 
@@ -40,8 +40,8 @@ export const useLogin = () => {
 
 
   }
-   
-   const mutation = useMutation({
+
+  const mutation = useMutation({
     mutationFn: async () => {
       console.time("Login API Request")
       const response = await fetch("/api/v1/users/login", {
@@ -52,26 +52,27 @@ export const useLogin = () => {
         body: JSON.stringify(data),
         credentials: "include"
       });
-      console.timeEnd("Login API Request"); 
-    
+      console.timeEnd("Login API Request");
+
       const result = await response.json();
-   
+
       console.log(result);
 
-      
+
       if (!response.ok) throw new Error(result.message || "Login failed");
       return result.data.user; // ✅ Return user data
     },
     onSuccess: (user) => {
       // ✅ Store user in React Query cache
-  
+
       queryClient.setQueryData(["user"], user);
-   
-      if(user.role=== "admin"){
-        navigate("/admin/dashboard",{replace:true})
+      localStorage.setItem("user", JSON.stringify(user));
+
+      if (user.role === "admin") {
+        navigate("/admin/dashboard", { replace: true })
       }
-      else{
-        navigate("/user/dashboard",{replace:true})
+      else {
+        navigate("/user/dashboard", { replace: true })
       }
 
     },
@@ -85,8 +86,8 @@ export const useLogin = () => {
       mutation.mutate(data)
     }
   }
-  
-  
+
+
   const handleonChange = (e) => {
     const { name, value } = e.target
     SetData((prev) => ({ ...prev, [name]: value }))

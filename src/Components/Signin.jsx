@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import { useEffect } from 'react';
 import { Button, Input } from './index';
 import { Link } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
@@ -6,7 +6,6 @@ import { useLogin } from '../hooks/useLogin';
 import google from "../assets/google.png"
 import facebook from "../assets/facebook.jpeg"
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 
 
 const Signin = () => {
@@ -16,23 +15,22 @@ const Signin = () => {
     handleonChange,
     errors,
     showPassword } = useLogin();
-    
-    const navigate = useNavigate();
-    const queryClient = useQueryClient();
-    const user = queryClient.getQueryData(['user']);
-  
-    useEffect(() => {
-      if (user && user.role) {
-        if (user.role === 'admin') {
-          navigate('/admin/dashboard');
-        } else {
-          navigate('/user/dashboard');
-        }
+
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  useEffect(() => {
+    if (user && user.role) {
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/user/dashboard');
       }
-    }, [user,navigate]);
+    }
+  }, [user, navigate]);
   return (
     <>
-      
+
       <div className='w-3/4 sm:w-1/2 md:w-2/4 flex items-center justify-center   mb-20 mx-auto mt-8'>
         <div className={`md:mx-auto w-96 max-w-lg  rounded-none p-10 border border-black`}>
           <form className=''>
