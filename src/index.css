@@ -3,3 +3,17 @@
 @tailwind utilities;
 
 
+
+
+/* Custom styling for react-confirm-alert buttons */
+.react-confirm-alert-button-group button {
+  @apply px-4 py-2 rounded font-semibold mx-2;
+}
+
+.react-confirm-alert-button-group button:first-child {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+.react-confirm-alert-button-group button:last-child {
+  @apply bg-gray-600 text-white hover:bg-gray-700;
+}

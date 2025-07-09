@@ -11,12 +11,7 @@ function App() {
 
   return (
     <>
-    
-      {/* <Navbar/> */}
-      {/* <Signin/> */}
-      {/* <Aboutus/> */}
-      {/* <Contact/> */}
-      {/* <Footer/> */}
+
       
     </>
   )

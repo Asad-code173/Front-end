@@ -30,6 +30,7 @@ const ForgotPassword = lazy(() => import('./Pages/ForgotPassword.jsx'));
 const AdminDashboard = lazy(() => import('./Admin/Pages/Dashboard.jsx'))
 const Categories = lazy(() => import('./Admin/Pages/Categories.jsx'));
 const Products = lazy(() => import('./Admin/Pages/Products.jsx'));
+const CreateProducts = lazy(() => import('./Admin/Pages/CreateProducts.jsx'));
 
   
 
@@ -149,6 +150,14 @@ const router = createBrowserRouter([
               </Suspense>
             )
           },
+          {
+            path:"create-products",
+            element:(
+              <Suspense fallback={<div>......Loading</div>}>
+                <CreateProducts />
+              </Suspense>
+            )
+          }
           
           
         ],

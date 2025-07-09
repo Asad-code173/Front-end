@@ -12,7 +12,7 @@ const AdminLayout = () => {
     
         <div className='flex '>
           <Sidebar />
-          <div className='ml-8 sm:ml-64 mt-10 w-full'>
+          <div className='ml-8 sm:ml-64 mt-10 w-full pb-20'>
           <Outlet />
           </div>
         </div>
