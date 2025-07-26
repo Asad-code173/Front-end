@@ -1,5 +1,5 @@
 import { RiDashboardFill, RiShoppingBag3Fill } from "react-icons/ri";
-import { MdCategory, MdAccountCircle } from 'react-icons/md';
+import { MdCategory, MdAccountCircle,MdSupportAgent } from 'react-icons/md';
 import { AiOutlineUser, AiOutlineTag } from 'react-icons/ai';
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useState } from "react";
@@ -16,6 +16,7 @@ const Sidebar = () => {
     { url: "users", text: "Users", Icon: AiOutlineUser },
     { url: "customers", text: "Customers", Icon: MdAccountCircle },
     { url: "coupon", text: "Coupon", Icon: AiOutlineTag },
+    { url: "enquiries", text: "Enquiries", Icon: MdSupportAgent },
   ];
 
   const closeSidebar = () => setSidebarOpen(false);
@@ -47,7 +48,7 @@ const Sidebar = () => {
             to={item.url}
             onClick={closeSidebar}
             className={`flex items-center ml-3 space-x-3 py-2 px-4 transition ${
-              location.pathname === `/admin${item.url}` ? 'bg-blue-400 font-bold' : 'hover:bg-blue-100'
+              location.pathname === `/admin/${item.url}` ? 'bg-blue-400 font-bold' : 'hover:bg-blue-100'
             }`}
           >
             <item.Icon className="w-5 h-5" />

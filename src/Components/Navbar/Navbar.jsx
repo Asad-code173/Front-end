@@ -29,6 +29,11 @@ const navItems = [
     path: '/women',
     active: false,
   },
+  {
+    name:'Boys&Girls',
+    path:'/boys-girls',
+    active:false
+  }
 
 
 ]

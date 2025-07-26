@@ -14,16 +14,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // Front-end routes
 const Men = lazy(() => import('./Pages/Men'));
 const Women = lazy(() => import('./Pages/Women'));
-const Fragrances = lazy(() => import('./Pages/Fragrances'));
+const BoyGirl = lazy(() => import('./Pages/BoysGirls.jsx'));
 const About = lazy(() => import('./Pages/About'));
 const Contact = lazy(() => import('./Pages/Contact'));
 const Login = lazy(() => import('./Pages/Login'));
+
 const Home = lazy(() => import('./Pages/Home'));
 const TrackYourOrder = lazy(() => import('./Pages/TrackYourOrder'));
 const Cart = lazy(() => import('./Pages/Cart'));
 const NotFound = lazy(() => import('./Pages/NotFound'));
 const Signup = lazy(() => import('./Pages/SignUp'));
 const ForgotPassword = lazy(() => import('./Pages/ForgotPassword.jsx'));
+const ProductDetail = lazy(() => import('./Pages/ProductDetail.jsx'))
 
 // Admin routes
 
@@ -31,8 +33,10 @@ const AdminDashboard = lazy(() => import('./Admin/Pages/Dashboard.jsx'))
 const Categories = lazy(() => import('./Admin/Pages/Categories.jsx'));
 const Products = lazy(() => import('./Admin/Pages/Products.jsx'));
 const CreateProducts = lazy(() => import('./Admin/Pages/CreateProducts.jsx'));
+const Enquiries = lazy(() => import('./Admin/Pages/Enquiries.jsx'))
+const EnquiryDetail = lazy(() => import('./Admin/Pages/EnquiryDetail.jsx'))
 
-  
+
 
 
 
@@ -57,8 +61,8 @@ const router = createBrowserRouter([
         element: <Suspense fallback={<div>.......Loading</div>}><Women /></Suspense>
       },
       {
-        path: "/fragrances",
-        element: <Suspense fallback={<div>.......Loading</div>}><Fragrances /></Suspense>
+        path: "/boys-girls",
+        element: <Suspense fallback={<div>.......Loading</div>}><BoyGirl /></Suspense>
       },
       {
         path: "/about",
@@ -89,34 +93,20 @@ const router = createBrowserRouter([
         element: <Suspense fallback={<div>.......Loading</div>}><ForgotPassword /></Suspense>
       },
       {
+        path: "/mens/:slug",
+        element: <Suspense fallback={<div>.......Loading</div>}><ProductDetail/></Suspense>
+
+      },
+
+
+      {
         path: "*",
         element: <Suspense fallback={<div>.......Loading</div>}><NotFound /></Suspense>
       },
     ]
   },
-  // Admin routes 
-  // {
-  //   path: "admin",
-  //   element: <AdminLayout />,
-  //   children: [
-  //     {
-  //       path: "dashboard",
-  //       element: <Suspense fallback={<div>.....Loading</div>}><AdminDashboard /></Suspense>
-  //     },
-  //     {
-  //       path: "categories",
-  //       element: <Suspense fallback={<div>.....Loading</div>}><Categories /></Suspense>
-  //     },
-  //     {
-  //       path: "products",
-  //       element: <Suspense fallback={<div>.....Loading</div>}><Products /></Suspense>
-  //     },
 
 
-
-
-  //   ]
-  // },
   {
     path: "admin",
     element: <ProtectedRoute />,
@@ -151,15 +141,59 @@ const router = createBrowserRouter([
             )
           },
           {
-            path:"create-products",
-            element:(
-              <Suspense fallback={<div>......Loading</div>}>
-                <CreateProducts />
-              </Suspense>
-            )
+            path: "create-products",
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense fallback={<div>......Loading</div>}>
+                    <CreateProducts />
+                  </Suspense>
+                )
+              },
+              {
+                path: ":slug",
+                element: (
+                  <Suspense fallback={<div>........Loading</div>}>
+                    <CreateProducts />
+                  </Suspense>
+                )
+              }
+            ]
+          },
+          // {
+          //   path: "create-products?id",
+          //   element: (
+          //     <Suspense fallback={<div>......Loading</div>}>
+          //       <CreateProducts />
+          //     </Suspense>
+          //   )
+          // },
+          {
+            path: "enquiries",
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense fallback={<div>......Loading</div>}>
+                    <Enquiries />
+                  </Suspense>
+                )
+              },
+              {
+                path: ":id",
+                element: (
+                  <Suspense fallback={<div>......Loading</div>}>
+                    <EnquiryDetail />
+                  </Suspense>
+                )
+              }
+            ]
           }
-          
-          
+
+
+
+
         ],
       },
     ],

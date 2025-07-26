@@ -10,6 +10,9 @@ export default {
         'custom-dark': '#2d2b2a',
         'custom-light-blue': 'rgba(0, 115, 255, 0.1)',
       },
+      fontFamily:{
+         dmserif: ['"DM Serif Display"', 'serif']
+      },
       keyframes: {
         slideInTop: {
           '0%': {

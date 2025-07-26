@@ -1,11 +1,17 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, Input } from '../../Components';
 import { useMutation } from '@tanstack/react-query';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const CreateProducts = () => {
-  const naviagte = useNavigate()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient();
+  const fileRef = useRef();
+  const { slug } = useParams()
+
+  const isEdit = Boolean(slug)
+
   const [data, setData] = useState({
     ProductName: '',
     category: '',
@@ -18,7 +24,37 @@ const CreateProducts = () => {
   ]);
 
   const [error, setError] = useState({});
-  const fileRef = useRef();
+
+  const { data: getProduct } = useQuery({
+    enabled: !!slug,
+    queryKey: ['getProduct', slug],
+    queryFn: async () => {
+      const response = await fetch(`/api/v1/products/get-single-product/${slug}`)
+      if (!response.ok) {
+        throw new Error("Failed to fetch product by Id")
+      }
+      console.log(response)
+      const result = await response.json()
+      console.log(result)
+      return result.data[0]
+    }
+  })
+
+  useEffect(() => {
+    console.log("Hi", getProduct)
+    if (isEdit && getProduct) {
+      console.log("Get product id",getProduct._id)
+      setData({
+        ProductName: getProduct?.name,
+        category: getProduct?.category?._id || getProduct?.category?.name,
+        Image: getProduct.Image,
+        description: getProduct.description || '',
+      })
+      setVariants(getProduct.variants || [{ size: '', price: '', stock: '' }])
+
+    }
+  }, [isEdit, getProduct])
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +76,7 @@ const CreateProducts = () => {
     setVariants(updated);
   };
 
-  const queryClient = useQueryClient();
+
   const validateFields = () => {
     let errors = {};
     if (!data.ProductName) {
@@ -89,7 +125,7 @@ const CreateProducts = () => {
     queryKey: ['categories'],
     queryFn: async () => {
       const response = await fetch("/api/v1/categories/get-category")
-      if (!response) {
+      if (!response.ok) {
         throw new Error("Failed to Fetch Categories")
       }
       const result = await response.json()
@@ -99,20 +135,21 @@ const CreateProducts = () => {
 
   const ProductMutation = useMutation({
     mutationFn: async (formData) => {
-      const response = await fetch("/api/v1/products/create-product", {
-        method: "POST",
+      const Edit = isEdit ? `/api/v1/products/update-product/${getProduct._id}` : `/api/v1/products/create-product`
+      const Editmethod = isEdit ? 'PUT' : 'POST'
+      const response = await fetch(Edit, {
+        method: Editmethod,
         body: formData,
         credentials: "include"
       })
       const result = await response.json()
-      if (!response.ok)  throw new Error('Failed to create Product');
+      if (!response.ok) throw new Error(`Failed to ${isEdit ? 'update' : 'create'}Product`);
       if (response.ok) {
-        setData({ProductName: '',category: '',Image: null,description: ''})
-
-        setVariants([{size: '',price: '',stock: ''}])
-        naviagte("/admin/products")
+        setData({ ProductName: '', category: '', Image: null, description: '' })
+        setVariants([{ size: '', price: '', stock: '' }])
+        navigate("/admin/products")
       }
-      return result
+      return result.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['products'])
@@ -139,6 +176,11 @@ const CreateProducts = () => {
     ProductMutation.mutate(formData)
   };
 
+
+
+
+
+
   return (
     <div className="ml-10 md:ml-0 max-w-3xl">
       <form onSubmit={submitForm} className="space-y-6">
@@ -163,7 +205,7 @@ const CreateProducts = () => {
               name="category"
               value={data.category}
               onChange={handleChange}
-              className={`${error.Category ? 'border-red-500' : 'border border-black'} rounded-md h-10 px-2 bg-gray-200 `}
+              className={`${error.category ? 'border-red-500' : 'border border-black'} rounded-md h-10 px-2 bg-gray-200 `}
             >
               <option value="">Select Category</option>
               {categories?.map((category) => (
@@ -173,7 +215,7 @@ const CreateProducts = () => {
               ))}
             </select>
 
-            {error.Category && <p className="text-red-600 text-sm">{error.Category}</p>}
+            {error.category && <p className="text-red-600 text-sm">{error.category}</p>}
           </div>
         </div>
 
@@ -250,7 +292,15 @@ const CreateProducts = () => {
                 if (file) setData((prev) => ({ ...prev, Image: file }));
               }}
             />
-            {data.Image && <p className="text-black mt-2">Selected: {data.Image.name}</p>}
+            {data.Image ? (
+              typeof data.Image === 'string' ?
+                (
+                  <img src={data.Image} alt="Existing Product" className="h-24 mx-auto mt-2" />
+                ) : (
+                  <p className="text-black mt-2">Selected: {data.Image?.name}</p>
+                )
+            ):null}
+
             {error.Image && <p className="text-red-500 text-sm">{error.Image}</p>}
           </div>
         </div>
@@ -273,7 +323,7 @@ const CreateProducts = () => {
           <Button
             type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-            
+
           >
             Submit
           </Button>
