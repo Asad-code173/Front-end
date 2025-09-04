@@ -31,6 +31,7 @@ const ProductDetail = lazy(() => import('./Pages/ProductDetail.jsx'))
 
 const AdminDashboard = lazy(() => import('./Admin/Pages/Dashboard.jsx'))
 const Categories = lazy(() => import('./Admin/Pages/Categories.jsx'));
+const SubCategories = lazy(() => import('./Admin/Pages/SubCategories.jsx'))
 const Products = lazy(() => import('./Admin/Pages/Products.jsx'));
 const CreateProducts = lazy(() => import('./Admin/Pages/CreateProducts.jsx'));
 const Enquiries = lazy(() => import('./Admin/Pages/Enquiries.jsx'))
@@ -94,7 +95,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/mens/:slug",
-        element: <Suspense fallback={<div>.......Loading</div>}><ProductDetail/></Suspense>
+        element: <Suspense fallback={<div>.......Loading</div>}><ProductDetail /></Suspense>
 
       },
 
@@ -129,6 +130,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<div>......Loading</div>}>
                 <Categories />
+              </Suspense>
+            )
+          },
+          {
+            path: "subcategories",
+            element: (
+              <Suspense fallback={<div>......Loading</div>}>
+                <SubCategories />
               </Suspense>
             )
           },

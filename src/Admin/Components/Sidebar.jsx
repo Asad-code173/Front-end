@@ -12,6 +12,7 @@ const Sidebar = () => {
   const sideItems = [
     { url: "dashboard", text: "Dashboard", Icon: RiDashboardFill },
     { url: "categories", text: "Categories", Icon: MdCategory },
+    { url: "subcategories", text: "SubCategories", Icon: MdCategory },
     { url: "products", text: "Products", Icon: RiShoppingBag3Fill },
     { url: "users", text: "Users", Icon: AiOutlineUser },
     { url: "customers", text: "Customers", Icon: MdAccountCircle },

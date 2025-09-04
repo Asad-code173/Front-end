@@ -35,45 +35,6 @@ const Products = () => {
     
    
   };
-// edit products
-      // const EditProductMutation = useMutation({
-      //   mutationFn: async ({ id, updateProduct }) => {
-      //     const formData = new FormData()
-      //     formData.append('name', updateProduct.name)
-      //     formData.append('description', updateProduct.description);
-      //     formData.append('category', updateProduct.category)
-      //     if (updateProduct.photo) {
-      //       formData.append('photo', updateProduct.photo);
-      //     }
-      //     formData.append('variants', JSON.stringify(updateProduct.variants))
-    
-      //     console.log("🔍 Logging FormData being sent:");
-      //     for (let pair of formData.entries()) {
-      //       console.log(`${pair[0]}: ${pair[1]}`);
-      //     }
-    
-      //     const response = await fetch(`/api/v1/products/update-product/${id}`, {
-      //       method: "PUT",
-      //       body: formData,
-      //       credentials: 'include'
-      //     })
-      //     const result = await response.json()
-      //     if (!response.ok) {
-      //       throw new Error(result.message || "Failed to update product");
-      //     }
-      //     console.log("Product Update Successfully", result)
-      //     return result;
-      //   },
-      //   onSuccess: () => {
-      //     queryClient.invalidateQueries(['products']);
-      //     toast.success("Product updated successfully");
-      //   },
-      //   onError: (err) => {
-      //     toast.error(err.message);
-      //   }
-    
-      // })
-    
 
 
 
@@ -180,9 +141,11 @@ const Products = () => {
                       className='text-black hover:underline'>
                       <FaPencil title="Edit" />
                     </button>
-                    <button className='text-black hover:underline hover:text-red-600'>
+                    <button 
+                    onClick={() => handleDelete(product._id)}
+                    className='text-black hover:underline hover:text-red-600'>
                       <FaTrash
-                        onClick={() => handleDelete(product._id)}
+                        
                         title="Delete" />
                     </button>
                   </div>
